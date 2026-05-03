@@ -112,6 +112,62 @@ app.get("/v1/patients", async (req, res) => {
   }
 });
 
+
+app.get("/v1/patients/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    const patient = await prisma.patient.findUnique({
+      where: { patient_id: id },
+    });
+
+    if (!patient) {
+      return res.status(404).json({
+        code: "NOT_FOUND",
+        message: "Patient not found",
+        correlationId: Date.now().toString(),
+      });
+    }
+
+    res.json(patient);
+  } catch (err) {
+    handleError(res, err, "FETCH_ONE_FAILED");
+  }
+});
+
+app.put("/v1/patients/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { name, email, phone, dob } = req.body;
+
+    const updated = await prisma.patient.update({
+      where: { patient_id: id },
+      data: {
+        name,
+        email,
+        phone,
+        dob: dob ? new Date(dob) : undefined,
+      },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    handleError(res, err, "UPDATE_FAILED");
+  }
+});
+app.delete("/v1/patients/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    await prisma.patient.delete({
+      where: { patient_id: id },
+    });
+
+    res.json({ message: "Patient deleted successfully" });
+  } catch (err) {
+    handleError(res, err, "DELETE_FAILED");
+  }
+});
 app.listen(3001, () => {
   console.log("Patient Service running on port 3001");
 });
