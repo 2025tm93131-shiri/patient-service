@@ -173,6 +173,6 @@ app.delete("/v1/patients/:id", async (req, res) => {
     handleError(res, err, "DELETE_FAILED");
   }
 });
-app.listen(3001, () => {
-  console.log("Patient Service running on port 3001");
+app.listen(3000, () => {
+  console.log("Patient Service running on port 3000");
 });
