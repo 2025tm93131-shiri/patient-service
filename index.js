@@ -22,9 +22,14 @@ function maskPhone(phone) {
   return phone.replace(/(\d{2})\d{6}(\d{2})/, "$1******$2");
 }
 
-/* ❌ Error Handler */
+
 function handleError(res, err, code) {
-  console.error("Error:", err.message);
+  console.error(JSON.stringify({
+    level: "error",
+    message: err.message,
+    timestamp: new Date().toISOString(),
+    code
+  }));
 
   if (err.code === "P2002") {
     return res.status(400).json({
